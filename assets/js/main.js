@@ -131,12 +131,14 @@
     if (menu.hidden) return;
     menu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); lenis && lenis.start();
     header.classList.remove('menu-open');
+    menuBtn.textContent = 'Menu';
   }
   menuBtn.addEventListener('click', () => {
     const open = menu.hidden;
     if (!open) return closeMenu();
     menu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); lenis && lenis.stop();
     header.classList.add('menu-open');
+    menuBtn.textContent = TL.t('Fermer', 'Close');
     if (!reduced) gsap.from($$('#menu li'), { yPercent: 60, opacity: 0, stagger: .05, duration: .7, ease: 'expo.out' });
     const first = $('#menu a'); first && first.focus();
   });
@@ -208,6 +210,7 @@
     const qx = gsap.quickTo(cur, 'x', { duration: .35, ease: 'power3' });
     const qy = gsap.quickTo(cur, 'y', { duration: .35, ease: 'power3' });
     const pts = [];
+    let dirty = false;
     addEventListener('pointermove', e => {
       qx(e.clientX); qy(e.clientY); cur.style.opacity = 1;
       pts.push({ x: e.clientX, y: e.clientY, t: performance.now() });
@@ -215,14 +218,15 @@
     }, { passive: true });
     document.addEventListener('pointerleave', () => { cur.style.opacity = 0; });
     document.addEventListener('pointerover', e => {
-      cur.classList.toggle('is-active', !!e.target.closest('a, button, [role="slider"], .week, .od-card, label'));
+      cur.classList.toggle('is-active', !!e.target.closest('a, button, [role="slider"], .week, label, [data-zoom]'));
     });
     gsap.ticker.add(() => {
       const now = performance.now();
+      while (pts.length && now - pts[0].t > 700) pts.shift();
+      if (pts.length < 3) { if (dirty) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); dirty = false; } return; }
+      dirty = true;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, innerWidth, innerHeight);
-      while (pts.length && now - pts[0].t > 700) pts.shift();
-      if (pts.length < 3) return;
       ctx.lineCap = 'round';
       for (const side of [-1, 1]) {
         for (let i = 1; i < pts.length; i++) {
@@ -259,7 +263,7 @@
   applyLang(lang(), true);
 
   const bendVisible = new Set();
-  const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? bendVisible.add(e.target) : bendVisible.delete(e.target)));
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) bendVisible.add(e.target); else { bendVisible.delete(e.target); e.target.style.transform = ''; } }));
   splits.forEach(s => io.observe(s.el));
   if (!reduced) {
     splits.forEach(s => {
@@ -270,11 +274,16 @@
         onEnter: () => gsap.to(s.split.chars, { yPercent: 0, skewX: 0, rotate: 0, opacity: 1, duration: 1.1, stagger: .016, ease: 'expo.out' })
       });
     });
-    let skew = 0;
+    let skew = 0, applied = false;
     gsap.ticker.add(() => {
-      const target = clamp(-TL.velocity * 0.32, -7, 7);
-      skew += (target - skew) * 0.12;
-      if (Math.abs(skew) < 0.01 && Math.abs(target) < 0.01) return;
+      const target = clamp(-TL.velocity * 0.2, -4, 4);
+      TL.velocity *= .86;
+      skew += (target - skew) * 0.14;
+      if (Math.abs(skew) < 0.05 && Math.abs(target) < 0.05) {
+        if (applied) { bendVisible.forEach(el => { el.style.transform = ''; }); applied = false; skew = 0; }
+        return;
+      }
+      applied = true;
       bendVisible.forEach(el => { el.style.transform = `skewX(${skew.toFixed(2)}deg)`; el.style.transformOrigin = '0 100%'; });
     });
   }
@@ -323,24 +332,28 @@
     const wrapEl = $('.wrap', main);
     const wrapW = wrapEl ? wrapEl.getBoundingClientRect().width : W * .92;
     const margin = Math.max(6, (W - wrapW) / 2);
-    const pts = [];
-    $$('[data-trace]', main).forEach(sec => {
+    const narrow = W < 760;
+    const segs = [];
+    $$('[data-trace]', main).forEach((sec, i) => {
       const r = sec.getBoundingClientRect();
+      const cs = getComputedStyle(sec);
       const top = r.top + scrollY - mainTop;
-      const v = sec.dataset.trace;
-      const right = v === 'r' || (+v > .5);
+      const right = sec.dataset.trace === 'r';
       const x = right ? W - margin * .5 : margin * .5;
-      const inset = Math.min(140, r.height * .14);
-      const startY = sec === $('[data-trace]', main) ? top + r.height * .58 : top + inset;
-      pts.push([x, startY], [x, top + r.height - inset]);
+      const insT = Math.min(140, (parseFloat(cs.paddingTop) || 0) * .55);
+      const insB = Math.min(140, (parseFloat(cs.paddingBottom) || 0) * .55);
+      segs.push({ x, y0: i === 0 ? top + r.height : top + insT, y1: top + r.height - insB });
     });
-    if (pts.length < 2) return;
-    let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
-    for (let i = 1; i < pts.length; i++) {
-      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
-      if (Math.abs(x1 - x0) < 1) { d += ` L${x1.toFixed(1)} ${y1.toFixed(1)}`; continue; }
-      const dy = y1 - y0;
-      d += ` C${x0.toFixed(1)} ${(y0 + dy * .62).toFixed(1)}, ${x1.toFixed(1)} ${(y1 - dy * .62).toFixed(1)}, ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+    if (segs.length < 2) return;
+    const f = n => n.toFixed(1);
+    let d = `M${f(segs[0].x)} ${f(segs[0].y1)}`;
+    for (let i = 1; i < segs.length; i++) {
+      const A = segs[i - 1], B = segs[i];
+      const dy = B.y0 - A.y1;
+      if (narrow && i > 1) d += ` M${f(A.x)} ${f(A.y1)}`;
+      if (Math.abs(B.x - A.x) < 1) d += ` L${f(B.x)} ${f(B.y0)}`;
+      else d += ` C${f(A.x)} ${f(A.y1 + dy * .62)}, ${f(B.x)} ${f(B.y0 - dy * .62)}, ${f(B.x)} ${f(B.y0)}`;
+      if (!narrow) d += ` L${f(B.x)} ${f(B.y1)}`;
     }
     const [a, b] = $$('path', svgTrace);
     a.setAttribute('d', d);
@@ -368,9 +381,20 @@
     const len = p[0];
     a.style.strokeDashoffset = total - len;
     b.style.strokeDashoffset = total - len;
-    if (head) { head.setAttribute('cx', p[1] + (main.clientWidth < 760 ? 2 : 3.5)); head.setAttribute('cy', p[2]); head.style.opacity = len > 4 && len < total - 4 ? 1 : 0; }
+    if (head) { head.setAttribute('cx', p[1] + 3.5); head.setAttribute('cy', p[2]); head.style.opacity = main.clientWidth >= 760 && len > 4 && len < total - 4 ? 1 : 0; }
   }
   ScrollTrigger.addEventListener('refresh', buildTrace);
+  // Le contenu change de hauteur (tarifs, formulaire) : on recalcule tracé et déclencheurs
+  if ('ResizeObserver' in window) {
+    let lastH = main.offsetHeight, rsT = 0;
+    new ResizeObserver(() => {
+      const h = main.offsetHeight;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      clearTimeout(rsT);
+      rsT = setTimeout(() => ScrollTrigger.refresh(), 300);
+    }).observe(main);
+  }
   addEventListener('scroll', updateTrace, { passive: true });
   if (lenis) lenis.on('scroll', updateTrace);
 
@@ -385,6 +409,7 @@
       const p = clamp(scrollY / (max || 1), 0, 1);
       val.textContent = fmt(Math.round((from + (to - from) * p) / 10) * 10);
       alt.style.setProperty('--alt-pos', p * 100 + '%');
+      alt.classList.toggle('is-on', scrollY > innerHeight * .6);
     };
     addEventListener('scroll', upd, { passive: true }); upd();
   }
@@ -416,11 +441,10 @@
   /* ---------------- Compteurs ---------------- */
   $$('[data-count]').forEach(el => {
     const target = +el.dataset.count;
-    const fmt = n => Math.round(n).toLocaleString(lang() === 'en' ? 'en-GB' : 'fr-FR');
+    const fmt = n => Math.round(n).toLocaleString(lang() === 'en' ? 'en-GB' : 'fr-FR').replace(/\u202f/g, '\u00a0');
     if (reduced) { el.textContent = fmt(target); return; }
-    const o = { v: +(el.dataset.countFrom || 0) };
-    el.textContent = fmt(o.v);
-    ScrollTrigger.create({ trigger: el, start: 'top 92%', once: true, onEnter: () => gsap.to(o, { v: target, duration: 2, ease: 'power3.out', onUpdate: () => { el.textContent = fmt(o.v); } }) });
+    const from = +(el.dataset.countFrom || 0);
+    ScrollTrigger.create({ trigger: el, start: 'top 92%', once: true, onEnter: () => { const o = { v: from }; el.textContent = fmt(from); gsap.to(o, { v: target, duration: 1.6, ease: 'power3.out', onUpdate: () => { el.textContent = fmt(o.v); }, onComplete: () => { el.textContent = fmt(target); } }); } });
   });
 
   /* ---------------- Manifeste : mots + talon qui se lève ---------------- */
@@ -440,13 +464,13 @@
     if (!reduced) {
       const mm = gsap.matchMedia();
       mm.add('(min-width: 861px)', () => {
-        const tl = gsap.timeline({ scrollTrigger: { trigger: manifest, start: 'top top', end: '+=120%', pin: true, scrub: .6 } });
+        const tl = gsap.timeline({ scrollTrigger: { trigger: manifest, start: 'top top', end: '+=60%', pin: true, scrub: .6 } });
         tl.to(words, { opacity: 1, stagger: .1, ease: 'none' }, 0);
-        if (boot) tl.to(boot, { rotate: -26, svgOrigin: '96 52', ease: 'none', duration: words.length * .1 }, 0);
+        if (boot) tl.to(boot, { rotate: -24, svgOrigin: '101 54', ease: 'none', duration: words.length * .1 }, 0);
       });
       mm.add('(max-width: 860px)', () => {
         gsap.to(words, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: q, start: 'top 80%', end: 'bottom 45%', scrub: true } });
-        if (boot) gsap.to(boot, { rotate: -26, svgOrigin: '96 52', ease: 'none', scrollTrigger: { trigger: '.heel', start: 'top 85%', end: 'bottom 40%', scrub: true } });
+        if (boot) gsap.to(boot, { rotate: -24, svgOrigin: '101 54', ease: 'none', scrollTrigger: { trigger: '.heel', start: 'top 85%', end: 'bottom 40%', scrub: true } });
       });
       document.addEventListener('tl:lang', () => { words = wrapWords(); gsap.set(words, { opacity: 1 }); });
     } else {
@@ -597,7 +621,9 @@
 
   /* ---------------- Itinéraires et coches ---------------- */
   $$('[data-route]').forEach((p, i) => {
-    const l = p.getTotalLength();
+    let l = 0;
+    try { l = p.getTotalLength(); } catch (e) { l = 0; }
+    if (!l) return;
     p.style.strokeDasharray = l;
     p.style.strokeDashoffset = reduced ? 0 : l;
     if (!reduced) gsap.to(p, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: p.closest('.map'), start: `top ${80 - i * 10}%`, end: 'bottom 60%', scrub: 1 } });
@@ -622,7 +648,7 @@
     }
     const fb = $('.footer-brand');
     if (fb) gsap.from(fb, { yPercent: 60, opacity: 0, skewX: -12, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: fb, start: 'top 95%', once: true } });
-    $$('.hero-facts, .facts').forEach(list => gsap.from(list.children, { y: 18, opacity: 0, stagger: .06, duration: .9, ease: 'expo.out', scrollTrigger: { trigger: list, start: 'top 92%', once: true } }));
+    $$('.facts').forEach(list => gsap.from(list.children, { y: 18, opacity: 0, stagger: .06, duration: .9, ease: 'expo.out', scrollTrigger: { trigger: list, start: 'top 92%', once: true } }));
   }
 
   /* ---------------- Sous-navigation active ---------------- */
@@ -635,6 +661,23 @@
       onToggle: s => { if (s.isActive) { subLinks.forEach(x => x.classList.toggle('is-active', x === a)); a.scrollIntoView({ block: 'nearest', inline: 'center' }); } }
     });
   });
+
+  /* ---------------- Barre de réservation mobile ---------------- */
+  const mbar = $('.mbar');
+  if (mbar) {
+    const blockers = new Set();
+    const link = $('a', mbar);
+    const upd = () => {
+      const on = scrollY > innerHeight * .7 && !blockers.size && !document.documentElement.classList.contains('lb-open');
+      mbar.classList.toggle('is-on', on);
+      mbar.setAttribute('aria-hidden', String(!on));
+      link.tabIndex = on ? 0 : -1;
+    };
+    const io3 = new IntersectionObserver(es => { es.forEach(e => (e.isIntersecting ? blockers.add(e.target) : blockers.delete(e.target))); upd(); }, { rootMargin: '0px 0px -10% 0px' });
+    $$('#tarifs, #demande, #reserver, .site-footer').forEach(el => io3.observe(el));
+    addEventListener('scroll', upd, { passive: true });
+    upd();
+  }
 
   /* ---------------- Ancre à l'arrivée ---------------- */
   addEventListener('load', () => {

@@ -1,6 +1,7 @@
 /* Images : vraie image (manifeste TL_IMAGES) ou visuel provisoire dessiné en code */
 (function () {
   const IMG = window.TL_IMAGES || {};
+  const ILLUS = ['grok/massif-hiver-16x9', 'grok/massif-ete-16x9', 'grok/flaine-altitude-16x9', 'grok/carroz-ambiance-16x9', 'grok/acces-route-16x9', 'grok/inclus-linge-4x5', 'grok/inclus-veillee-4x5', 'grok/service-transfert-16x9'];
   const NS = 'http://www.w3.org/2000/svg';
 
   function rand(seed) {
@@ -123,6 +124,14 @@
       picture.appendChild(img);
       fig.appendChild(picture);
       fig.classList.add('has-img');
+      // Images d'ambiance générées qui évoquent des lieux : mention discrète
+      if (ILLUS.includes(key)) {
+        const c = document.createElement('figcaption');
+        c.className = 'illus';
+        c.dataset.fr = 'Illustration'; c.dataset.en = 'Illustration';
+        c.textContent = 'Illustration';
+        fig.appendChild(c);
+      }
     } else {
       fig.appendChild(placeholder(fig));
       const tag = document.createElement('span');

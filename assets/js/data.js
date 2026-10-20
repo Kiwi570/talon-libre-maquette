@@ -46,6 +46,8 @@ window.TL_DATA = {
       ['2028-01-01', '2028-01-08', 3300], ['2028-01-08', '2028-01-15', 2200]
     ]
   },
+  /* Appartement 8 personnes : tarifs sur demande sur le site actuel ; dépôt de garantie non publié */
+  annexe8: { capacity: 8, minNights: 4, checkIn: '15h – 19h', checkOut: '10h00', checkInEn: '3–7 pm', checkOutEn: '10 am', deposit: null, planning: null },
   payment: { first: 0.25, second: 0.25, secondMonthsBefore: 2, balanceWorkingDaysBefore: 10 },
   cancellation: { fullRefundDays: 30, halfDays: 15 }
 };
