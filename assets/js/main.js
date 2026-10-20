@@ -142,27 +142,17 @@
   });
   addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
-  /* ---------------- Préférences : animations et son ---------------- */
-  const motionBtn = $('[data-motion]');
-  motionBtn.setAttribute('aria-pressed', String(reduced));
-  motionBtn.addEventListener('click', () => {
-    store.set('tl-motion', reduced ? 'full' : 'reduced');
-    try { sessionStorage.setItem('tl-scroll', String(scrollY)); } catch (e) { /* */ }
-    location.reload();
-  });
-  try {
-    const sy = sessionStorage.getItem('tl-scroll');
-    if (sy) { sessionStorage.removeItem('tl-scroll'); addEventListener('load', () => setTimeout(() => { scrollTo(0, +sy); lenis && lenis.scrollTo(+sy, { immediate: true }); }, 60)); }
-  } catch (e) { /* */ }
-
+  /* ---------------- Ambiance sonore (bouton dans l'en-tête) ---------------- */
   const soundBtn = $('[data-sound]');
   let audio = null;
-  soundBtn.addEventListener('click', () => {
-    if (!audio) audio = makeAmbience();
-    const on = soundBtn.getAttribute('aria-pressed') !== 'true';
-    soundBtn.setAttribute('aria-pressed', String(on));
-    audio && audio.set(on);
-  });
+  if (soundBtn) {
+    soundBtn.addEventListener('click', () => {
+      if (!audio) audio = makeAmbience();
+      const on = soundBtn.getAttribute('aria-pressed') !== 'true';
+      soundBtn.setAttribute('aria-pressed', String(on));
+      audio && audio.set(on);
+    });
+  }
 
   // Ambiance sonore générée : vent + crépitement du poêle (aucun fichier)
   function makeAmbience() {
