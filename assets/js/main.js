@@ -500,19 +500,58 @@
       if (!track) return;
       if (reduced || ctx.conditions.small) { sec.classList.add('native'); return; }
       sec.classList.remove('native');
+      sec.classList.add('pinned');
+      const cards = $$('.h-card', track);
+
+      // Barre de progression au-dessus de la bande
+      let bar = $('.hscroll-progress', sec);
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.className = 'hscroll-progress';
+        bar.setAttribute('aria-hidden', 'true');
+        bar.innerHTML = '<span></span>';
+        track.before(bar);
+      }
+      const fill = bar.firstElementChild;
+
+      // Les photos prennent la hauteur disponible : la bande et ses légendes tiennent toujours dans l'écran
+      const fit = () => {
+        const sub = $('.subnav');
+        sec.style.setProperty('--sub-h', sub ? sub.offsetHeight + 'px' : '0px');
+        let mh = 320;
+        for (let pass = 0; pass < 2; pass++) {
+          sec.style.setProperty('--mh', mh + 'px');
+          const capH = Math.max(40, ...cards.map(c => Array.from(c.children).filter(x => !x.classList.contains('media')).reduce((a, x) => a + x.offsetHeight, 0)));
+          mh = clamp(track.clientHeight - capH - 34, 200, 640);
+        }
+        sec.style.setProperty('--mh', mh + 'px');
+      };
+      fit();
+      ScrollTrigger.addEventListener('refreshInit', fit);
+
+      // Défilement plus court : la bande avance plus vite que la molette
       const dist = () => Math.max(0, track.scrollWidth - innerWidth);
       const tween = gsap.to(track, {
         x: () => -dist(), ease: 'none',
-        scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: .8, invalidateOnRefresh: true, anticipatePin: 1 }
+        scrollTrigger: {
+          trigger: sec, start: 'top top', end: () => '+=' + Math.round(dist() * .5), pin: true, scrub: .6, invalidateOnRefresh: true, anticipatePin: 1,
+          onUpdate: self => { fill.style.transform = `scaleX(${self.progress})`; }
+        }
       });
-      $$('.h-card', track).forEach((card, i) => {
+      cards.forEach((card, i) => {
         const m = $('.media', card);
         const inner = m && (m.querySelector('picture img, svg.ph-svg') || m.firstElementChild);
-        if (inner) gsap.fromTo(inner, { xPercent: -6, scale: 1.12 }, { xPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: card, containerAnimation: tween, start: 'left right', end: 'right left', scrub: true } });
-        gsap.from(card, { y: i % 2 ? 60 : -30, rotate: i % 2 ? 1.5 : -1.5, ease: 'none', scrollTrigger: { trigger: card, containerAnimation: tween, start: 'left right', end: 'center center', scrub: true } });
+        if (inner) gsap.fromTo(inner, { xPercent: -5, scale: 1.1 }, { xPercent: 5, scale: 1.1, ease: 'none', scrollTrigger: { trigger: card, containerAnimation: tween, start: 'left right', end: 'right left', scrub: true } });
+        gsap.from(card, { y: i % 2 ? 22 : -14, rotate: i % 2 ? 1 : -1, ease: 'none', scrollTrigger: { trigger: card, containerAnimation: tween, start: 'left right', end: 'left 60%', scrub: true } });
       });
+      return () => ScrollTrigger.removeEventListener('refreshInit', fit);
     });
-    return () => $$('.hscroll').forEach(sec => sec.classList.remove('native'));
+    return () => $$('.hscroll').forEach(sec => {
+      sec.classList.remove('native', 'pinned');
+      sec.style.removeProperty('--mh');
+      const bar = $('.hscroll-progress', sec);
+      bar && bar.remove();
+    });
   });
 
   /* ---------------- Cartes inclinables ---------------- */
