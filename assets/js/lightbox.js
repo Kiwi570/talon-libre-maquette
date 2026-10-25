@@ -27,7 +27,7 @@
     badge.innerHTML = '<svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.6 12.6 17 17M8.5 6v5M6 8.5h5"/></svg>';
     fig.appendChild(badge);
   });
-  const label = fig => t('Agrandir la photo : ', 'Enlarge photo: ') + clean(t(fig.dataset.label, fig.dataset.labelEn));
+  const label = fig => t('Agrandir la photo : ', 'Enlarge photo: ') + clean(t(fig.dataset.label, fig.dataset.labelEn));
   const relabel = () => figs.forEach(f => f.setAttribute('aria-label', label(f)));
   relabel();
 

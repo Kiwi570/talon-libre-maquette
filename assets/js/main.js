@@ -16,7 +16,7 @@
   TL.reduced = reduced;
   TL.velocity = 0;
 
-  if (!hasGSAP) { root.classList.add('no-anim'); $('.loader') && $('.loader').remove(); return; }
+  if (!hasGSAP || typeof window.ScrollTrigger === 'undefined' || typeof window.SplitText === 'undefined') { root.classList.add('no-anim'); $('.loader') && $('.loader').remove(); return; }
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
   /* ---------------- Langue ---------------- */
@@ -80,14 +80,16 @@
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href]');
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank') return;
-    const url = new URL(a.getAttribute('href'), location.href);
+    const url = new URL(a.href);
     if (url.origin !== location.origin) return;
     const samePage = url.pathname.replace(/\/index(\.html)?$/, '/').replace(/\.html$/, '') === location.pathname.replace(/\/index(\.html)?$/, '/').replace(/\.html$/, '');
     if (samePage && url.hash) {
-      const t = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+      let t = null; try { t = document.getElementById(decodeURIComponent(url.hash.slice(1))); } catch (er) { /* ancre invalide */ }
       if (t) { e.preventDefault(); closeMenu(); scrollToTarget(t); history.replaceState(null, '', url.hash); }
       return;
     }
+    // lien vers la page courante sans ancre : pas de rechargement ni de loader
+    if (samePage && url.search === location.search && !a.hasAttribute('download')) { e.preventDefault(); closeMenu(); scrollToTarget(document.body); return; }
     if (!samePage && !reduced && /\.html$|\/$/.test(url.pathname) && !a.hasAttribute('download')) {
       e.preventDefault();
       leave(url.href);
@@ -96,6 +98,7 @@
 
   /* ---------------- Transitions de page ---------------- */
   function leave(href) {
+    closeMenu();
     const path = $('.curtain path');
     try { sessionStorage.setItem('tl-trans', '1'); } catch (err) { /* */ }
     if (!path) { location.href = href; return; }
@@ -109,7 +112,7 @@
       onComplete() { location.href = href; }
     });
   }
-  addEventListener('pageshow', e => { if (e.persisted) { const p = $('.curtain path'); if (p) p.setAttribute('d', 'M0 100 L100 100 L100 100 L0 100 Z'); } });
+  addEventListener('pageshow', e => { if (e.persisted) { const p = $('.curtain path'); if (p) p.setAttribute('d', 'M0 100 L100 100 L100 100 L0 100 Z'); closeMenu(); } });
 
   /* ---------------- En-tête et menu ---------------- */
   const header = $('[data-header]');
@@ -127,22 +130,32 @@
 
   const menu = $('#menu');
   const menuBtn = $('.menu-toggle');
+  const horsMenu = on => { $$('body > main, body > footer, .mbar, .altimeter, .skip').forEach(el => { el.inert = on; }); root.classList.toggle('menu-ouvert', on); };
+  menu.setAttribute('data-lenis-prevent', '');
   function closeMenu() {
     if (menu.hidden) return;
-    menu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); lenis && lenis.start();
+    menu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); horsMenu(false); lenis && lenis.start();
     header.classList.remove('menu-open');
     menuBtn.textContent = 'Menu';
   }
   menuBtn.addEventListener('click', () => {
     const open = menu.hidden;
     if (!open) return closeMenu();
-    menu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); lenis && lenis.stop();
+    menu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); horsMenu(true); lenis && lenis.stop();
     header.classList.add('menu-open');
     menuBtn.textContent = TL.t('Fermer', 'Close');
     if (!reduced) gsap.from($$('#menu li'), { yPercent: 60, opacity: 0, stagger: .05, duration: .7, ease: 'expo.out' });
     const first = $('#menu a'); first && first.focus();
   });
-  addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+  addEventListener('keydown', e => {
+    if (menu.hidden) return;
+    if (e.key === 'Escape') { closeMenu(); menuBtn.focus(); return; }
+    if (e.key !== 'Tab') return;
+    const items = [menuBtn, ...$$('a[href], button:not([disabled])', menu)];
+    const i = items.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); items[items.length - 1].focus(); }
+    else if (!e.shiftKey && i === items.length - 1) { e.preventDefault(); items[0].focus(); }
+  });
 
   /* ---------------- Ambiance sonore (bouton dans l'en-tête) ---------------- */
   const soundBtn = $('[data-sound]');
@@ -683,7 +696,7 @@
   addEventListener('load', () => {
     ScrollTrigger.refresh();
     if (location.hash) {
-      const t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      let t = null; try { t = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (er) { /* ancre invalide */ }
       if (t) setTimeout(() => scrollToTarget(t), reduced ? 0 : 900);
     }
   });

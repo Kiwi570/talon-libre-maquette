@@ -3,22 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title data-en="Chalet Le Talon Libre, Les Carroz d’Arâches: 10 guests, spa and sauna">Chalet Le Talon Libre, Les Carroz d’Arâches : 10 personnes, spa et sauna</title>
-<meta name="description" content="Chalet familial aux Carroz d’Arâches : 4 chambres doubles, jusqu’à 10 personnes, spa, sauna et fitness, nombreux services inclus." data-en-content="Family chalet in Les Carroz d’Arâches: 4 double bedrooms, up to 10 guests, spa, sauna and gym, many services included.">
+<title data-en="Chalet Le Talon Libre, Les Carroz d’Arâches: 10 guests, spa and sauna">Chalet Le Talon Libre, Les Carroz d’Arâches&nbsp;: 10 personnes, spa et sauna</title>
+<meta name="description" content="Chalet familial aux Carroz d’Arâches&nbsp;: 4 chambres doubles, jusqu’à 10 personnes, spa, sauna et fitness, nombreux services inclus." data-en-content="Family chalet in Les Carroz d’Arâches: 4 double bedrooms, up to 10 guests, spa, sauna and gym, many services included.">
 <meta name="theme-color" content="#f1f4f6">
 <meta name="robots" content="noindex, nofollow">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Le Talon Libre">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:locale:alternate" content="en_GB">
-<meta property="og:title" content="Chalet Le Talon Libre, Les Carroz d’Arâches : 10 personnes, spa et sauna">
-<meta property="og:description" content="Chalet familial aux Carroz d’Arâches : 4 chambres doubles, jusqu’à 10 personnes, spa, sauna et fitness, nombreux services inclus.">
-<meta property="og:image" content="assets/img/og/chalet.jpg">
+<meta property="og:title" content="Chalet Le Talon Libre, Les Carroz d’Arâches&nbsp;: 10 personnes, spa et sauna">
+<meta property="og:description" content="Chalet familial aux Carroz d’Arâches&nbsp;: 4 chambres doubles, jusqu’à 10 personnes, spa, sauna et fitness, nombreux services inclus.">
+<meta property="og:image" content="https://talon-libre-maquette.vercel.app/assets/img/og/chalet.jpg">
+<meta property="og:url" content="https://talon-libre-maquette.vercel.app/chalet">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LodgingBusiness","name":"Chalet Le Talon Libre","description":"Chalet familial jusqu’à 10 personnes aux Carroz d’Arâches : 4 chambres doubles, spa, sauna et fitness.","address":{"@type":"PostalAddress","addressLocality":"Les Carroz d’Arâches","postalCode":"74300","addressRegion":"Haute-Savoie","addressCountry":"FR"},"numberOfRooms":4,"petsAllowed":true,"checkinTime":"16:00","checkoutTime":"09:30","amenityFeature":[{"@type":"LocationFeatureSpecification","name":"Spa","value":true},{"@type":"LocationFeatureSpecification","name":"Sauna","value":true},{"@type":"LocationFeatureSpecification","name":"Fitness","value":true},{"@type":"LocationFeatureSpecification","name":"Parking privé","value":true},{"@type":"LocationFeatureSpecification","name":"Wi-Fi","value":true},{"@type":"LocationFeatureSpecification","name":"Ski room","value":true}],"telephone":"+41 78 642 45 29","email":"contact@chaletletalonlibre.com","sameAs":["https://www.facebook.com/chalettalonlibre","https://www.instagram.com/chalet_le_talon_libre/"]}</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect width='34' height='34' rx='6' fill='%230d1b2a'/%3E%3Cpath d='M9 4c13 5.5-6 13 7 19 5 2.5 6 5 4 8M15.5 4c13 5.5-6 13 7 19 5 2.5 6 5 4 8' fill='none' stroke='%23e2321f' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="preload" href="assets/fonts/fraunces-roman.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/intertight-roman.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/main.css">
@@ -50,7 +52,7 @@
   </div>
 </header>
 <div class="mbar" aria-hidden="true"><p><strong data-en="Up to 10 guests">Jusqu’à 10 personnes</strong><span data-en="Les Carroz d’Arâches">Les Carroz d’Arâches</span></p><a class="btn btn-red" href="#tarifs" tabindex="-1"><span class="btn-label" data-en="See dates">Voir les dates</span></a></div>
-<div class="menu" id="menu" hidden>
+<div class="menu" id="menu" data-lenis-prevent hidden>
   <ul>
     <li><a href="index.html" data-en="Home">Accueil</a></li>
     <li><a href="chalet.html" data-en="The chalet">Le chalet</a></li>
@@ -172,7 +174,7 @@
           <div class="field"><label for="arr" data-en="Arrival">Arrivée</label><input id="arr" type="date"><span class="err" id="arr-err" aria-live="polite"></span></div>
           <div class="field"><label for="nights" data-en="Length of stay">Durée</label><select id="nights"></select></div>
         </div>
-        <p class="muted" data-en="The rate depends on the period: send your dates and the exact amount is confirmed by email.">Le tarif dépend de la période : envoyez vos dates, le montant exact vous est confirmé par e-mail.</p>
+        <p class="muted" data-en="The rate depends on the period: send your dates and the exact amount is confirmed by email.">Le tarif dépend de la période&nbsp;: envoyez vos dates, le montant exact vous est confirmé par e-mail.</p>
         <p><span class="todo" data-en="Chalet rate grid to be completed">Grille tarifaire du chalet à compléter</span></p>
         <ul class="facts" style="margin-top:1.6rem">
           <li><span data-en="Check-in">Arrivée</span><strong data-en="4 pm to 8 pm">16h – 20h</strong></li>
@@ -207,7 +209,7 @@
       <div class="access-map"><div class="map" data-map>
   <div class="map-d">
   <svg viewBox="0 0 760 520" role="img" aria-labelledby="map-t-chalet">
-    <title id="map-t-chalet" data-en="Diagram: route from Geneva airport to Les Carroz and Flaine">Schéma : itinéraire de l’aéroport de Genève aux Carroz et à Flaine</title>
+    <title id="map-t-chalet" data-en="Diagram: route from Geneva airport to Les Carroz and Flaine">Schéma&nbsp;: itinéraire de l’aéroport de Genève aux Carroz et à Flaine</title>
     <g><ellipse class="relief" cx="590" cy="330" rx="54" ry="40"/><ellipse class="relief" cx="590" cy="330" rx="89.10000000000001" ry="66"/><ellipse class="relief" cx="590" cy="330" rx="124.2" ry="92"/><ellipse class="relief" cx="590" cy="330" rx="159.3" ry="118"/><ellipse class="relief" cx="590" cy="330" rx="194.4" ry="144"/><ellipse class="relief" cx="590" cy="330" rx="229.50000000000003" ry="170"/><ellipse class="relief" cx="590" cy="330" rx="264.6" ry="196"/><ellipse class="relief" cx="590" cy="330" rx="299.70000000000005" ry="222"/><ellipse class="relief" cx="590" cy="330" rx="334.8" ry="248"/></g>
     <path class="road" d="M390,300 L500,240 L596,214 L690,262"/>
     <path class="road" d="M390,300 C 560 380, 640 420, 700,488"/>
@@ -226,7 +228,7 @@
   </svg>
   </div>
   <div class="map-m"><svg viewBox="0 0 340 560" role="img" aria-labelledby="map-m-chalet">
-    <title id="map-m-chalet" data-en="Diagram: route from Geneva airport to Les Carroz and Flaine">Schéma : itinéraire de l’aéroport de Genève aux Carroz et à Flaine</title>
+    <title id="map-m-chalet" data-en="Diagram: route from Geneva airport to Les Carroz and Flaine">Schéma&nbsp;: itinéraire de l’aéroport de Genève aux Carroz et à Flaine</title>
     <g><ellipse class="relief" cx="200" cy="420" rx="60" ry="44"/><ellipse class="relief" cx="200" cy="420" rx="94" ry="70"/><ellipse class="relief" cx="200" cy="420" rx="128" ry="96"/><ellipse class="relief" cx="200" cy="420" rx="162" ry="122"/><ellipse class="relief" cx="200" cy="420" rx="196" ry="148"/><ellipse class="relief" cx="200" cy="420" rx="230" ry="174"/><ellipse class="relief" cx="200" cy="420" rx="264" ry="200"/></g>
     <path class="route" data-route d="M70,46 C 70 140, 214 150, 214,250 S 124 320, 124,372"/>
     <path class="route" data-route d="M124,372 C 124 430, 236 440, 236,500"/>
@@ -249,8 +251,8 @@
       <h2 class="title bend" data-en="Request your stay">Demander votre séjour</h2>
       <p class="lede" data-en="Three short steps, no payment online.">Trois étapes courtes, aucun paiement en ligne.</p>
       <figure class="media ratio-16x9 request-img reveal-media parallax" data-img="grok/formulaire-poudreuse-4x5" data-ph="winter" data-label="Image Grok : gerbe de poudreuse" data-label-en="Grok image: powder spray"></figure>
-      <ul class="reassure"><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l3.5 3.5L14 3.5"/></svg><span data-en="You receive a confirmation email, then your rental contract.">Vous recevez un e-mail de confirmation, puis votre contrat de location.</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l3.5 3.5L14 3.5"/></svg><span data-en="Deposits by bank transfer: 25% on booking, 25% two months before arrival, balance 10 working days before.">Acomptes par virement : 25 % à la réservation, 25 % deux mois avant l’arrivée, solde 10 jours ouvrables avant.</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l3.5 3.5L14 3.5"/></svg><span data-en="Deposits fully refunded if you cancel up to 30 days before your stay.">Acomptes remboursés en totalité si vous annulez jusqu’à 30 jours avant le séjour.</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l3.5 3.5L14 3.5"/></svg><span data-en="Check-in 4–8 pm, check-out by 9:30 am. Self check-in possible.">Arrivée de 16h à 20h, départ avant 9h30. Entrée autonome possible.</span></li></ul>
-      <p class="reassure-contact"><span data-en="A question?">Une question ?</span> <a class="link-trace" href="tel:+41786424529">+41 78 642 45 29</a> <a class="link-trace" href="mailto:contact@chaletletalonlibre.com">contact@chaletletalonlibre.com</a></p>
+      <ul class="reassure"><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l3.5 3.5L14 3.5"/></svg><span data-en="You receive a confirmation email, then your rental contract.">Vous recevez un e-mail de confirmation, puis votre contrat de location.</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l3.5 3.5L14 3.5"/></svg><span data-en="Deposits by bank transfer: 25% on booking, 25% two months before arrival, balance 10 working days before.">Acomptes par virement&nbsp;: 25 % à la réservation, 25 % deux mois avant l’arrivée, solde 10 jours ouvrables avant.</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l3.5 3.5L14 3.5"/></svg><span data-en="Deposits fully refunded if you cancel up to 30 days before your stay.">Acomptes remboursés en totalité si vous annulez jusqu’à 30 jours avant le séjour.</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l3.5 3.5L14 3.5"/></svg><span data-en="Check-in 4–8 pm, check-out by 9:30 am. Self check-in possible.">Arrivée de 16h à 20h, départ avant 9h30. Entrée autonome possible.</span></li></ul>
+      <p class="reassure-contact"><span data-en="A question?">Une question&nbsp;?</span> <a class="link-trace" href="tel:+41786424529">+41 78 642 45 29</a> <a class="link-trace" href="mailto:contact@chaletletalonlibre.com">contact@chaletletalonlibre.com</a></p>
     </div>
     <div>
       <ol class="steps"><li data-en="Dates">Dates</li><li>Services</li><li data-en="Contact details">Coordonnées</li></ol>
@@ -281,7 +283,7 @@
             <div class="field"><label for="f-mail" data-en="Email">E-mail</label><input id="f-mail" name="email" type="email" autocomplete="email" required><span class="err" data-err="email" aria-live="polite"></span></div>
             <div class="field"><label for="f-tel" data-en="Phone (optional)">Téléphone (facultatif)</label><input id="f-tel" name="tel" type="tel" autocomplete="tel"></div>
           </div>
-          <div class="field"><label for="f-msg" data-en="Message (optional)">Message (facultatif)</label><textarea id="f-msg" name="message"></textarea></div>
+          <div class="field"><label for="f-msg" data-en="Message (optional)">Message (facultatif)</label><textarea data-lenis-prevent id="f-msg" name="message"></textarea></div>
           <label class="checks consent"><input type="checkbox" name="accord"><span data-en="I agree that my details are used to reply to this request.">J’accepte que mes coordonnées soient utilisées pour répondre à cette demande.</span></label>
           <span class="err" data-err="accord" aria-live="polite"></span>
         </div>
@@ -290,7 +292,7 @@
           <button type="button" class="btn btn-ink" data-next><span class="btn-label" data-en="Next">Continuer</span></button>
           <button type="submit" class="btn btn-red" data-submit hidden><span class="btn-label" data-en="Send the request">Envoyer la demande</span></button>
         </div>
-        <p class="note" style="margin-top:1rem" data-en="Mock-up: nothing is sent.">Maquette : aucune donnée n’est envoyée.</p>
+        <p class="note" style="margin-top:1rem" data-en="Mock-up: nothing is sent.">Maquette&nbsp;: aucune donnée n’est envoyée.</p>
       </form>
       <div id="request-done" hidden tabindex="-1"></div>
     </div>
@@ -333,9 +335,9 @@
       </div>
     </div>
     <div class="footer-legal">
-      <span><span data-en="Legal notice:">Mentions légales :</span> <span class="todo" data-en="to be completed">à compléter</span></span>
-      <span><span data-en="Tourist rental registration no.:">N° d’enregistrement meublé de tourisme :</span> <span class="todo" data-en="to be completed">à compléter</span></span>
-      <span data-en="Mock-up: bookings and forms are simulated, nothing is sent.">Maquette : réservation et formulaires simulés, aucune donnée envoyée.</span>
+      <span><span data-en="Legal notice:">Mentions légales&nbsp;:</span> <span class="todo" data-en="to be completed">à compléter</span></span>
+      <span><span data-en="Tourist rental registration no.:">N° d’enregistrement meublé de tourisme&nbsp;:</span> <span class="todo" data-en="to be completed">à compléter</span></span>
+      <span data-en="Mock-up: bookings and forms are simulated, nothing is sent.">Maquette&nbsp;: réservation et formulaires simulés, aucune donnée envoyée.</span>
       <span>© 2026 Le Talon Libre</span>
     </div>
   </div>

@@ -136,8 +136,8 @@
       fig.appendChild(placeholder(fig));
       const tag = document.createElement('span');
       tag.className = 'ph-tag';
-      tag.textContent = (lang() === 'en' ? 'Temporary visual: ' : 'Visuel provisoire : ') + (lang() === 'en' ? fig.dataset.labelEn : fig.dataset.label).replace(/^(Photo du site actuel|Current site photo|Image Grok|Grok image)\s*:\s*/, '');
-      tag.dataset.fr = 'Visuel provisoire : ' + (fig.dataset.label || '').replace(/^(Photo du site actuel|Image Grok)\s*:\s*/, '');
+      tag.textContent = (lang() === 'en' ? 'Temporary visual: ' : 'Visuel provisoire : ') + (lang() === 'en' ? fig.dataset.labelEn : fig.dataset.label).replace(/^(Photo du site actuel|Current site photo|Image Grok|Grok image)\s*:\s*/, '');
+      tag.dataset.fr = 'Visuel provisoire : ' + (fig.dataset.label || '').replace(/^(Photo du site actuel|Image Grok)\s*:\s*/, '');
       tag.dataset.en = 'Temporary visual: ' + (fig.dataset.labelEn || '').replace(/^(Current site photo|Grok image)\s*:\s*/, '');
       fig.appendChild(tag);
       fig.setAttribute('role', 'img');

@@ -13,7 +13,11 @@ function visible(el, cb) {
   io.observe(el);
 }
 
+// WebGL testé à part : sans contexte, OGL écrit une erreur en console avant le repli 2D
+const webglOk = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch (e) { return false; } })();
+
 function makeRenderer(canvas) {
+  if (!webglOk) return null;
   try {
     const renderer = new Renderer({ canvas, alpha: true, premultipliedAlpha: false, antialias: false, dpr: Math.min(devicePixelRatio || 1, 2) });
     if (!renderer.gl) return null;

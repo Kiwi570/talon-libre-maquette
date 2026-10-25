@@ -96,9 +96,9 @@
       <div class="frise" role="img" aria-label="${t('Conditions d’annulation', 'Cancellation terms')}">
         <div class="frise-bar"><span class="z1" style="flex-basis:${z1 / span * 100}%"></span><span class="z2" style="flex-basis:${z2 / span * 100}%"></span><span class="z3" style="flex-basis:${z3 / span * 100}%"></span></div>
         <div class="frise-legend">
-          ${z1 > 0 ? `<span><i class="z1"></i>${t('Jusqu’au', 'Until')} ${fmt(j30, { day: 'numeric', month: 'long' })}${t(' : ', ': ')}${t('acomptes remboursés en totalité', 'deposits fully refunded')}</span>` : ''}
-          ${z2 > 0 ? `<span><i class="z2"></i>${t('Jusqu’au', 'Until')} ${fmt(j15, { day: 'numeric', month: 'long' })}${t(' : ', ': ')}${t('50 % du loyer dû', '50% of the rent due')}</span>` : ''}
-          <span><i class="z3"></i>${t('Ensuite : totalité du loyer due', 'After that: full rent due')}</span>
+          ${z1 > 0 ? `<span><i class="z1"></i>${t('Jusqu’au', 'Until')} ${fmt(j30, { day: 'numeric', month: 'long' })}${t(' : ', ': ')}${t('acomptes remboursés en totalité', 'deposits fully refunded')}</span>` : ''}
+          ${z2 > 0 ? `<span><i class="z2"></i>${t('Jusqu’au', 'Until')} ${fmt(j15, { day: 'numeric', month: 'long' })}${t(' : ', ': ')}${t('50 % du loyer dû', '50% of the rent due')}</span>` : ''}
+          <span><i class="z3"></i>${t('Ensuite : totalité du loyer due', 'After that: full rent due')}</span>
         </div>
       </div>
       <div class="btn-group">
@@ -123,8 +123,9 @@
     { id: 'e27', fr: 'Été 2027', en: 'Summer 2027', test: d => d >= new Date(2027, 5, 1) && d < new Date(2027, 9, 1) },
     { id: 'h27', fr: 'Hiver 2027-2028', en: 'Winter 2027-28', test: d => d >= new Date(2027, 9, 1) && d < new Date(2028, 5, 1) }
   ];
-  let season = 'h26';
   const allWeeks = () => D.annexe.weeks.map(([a, b, p]) => ({ a: parse(a), b: parse(b), p }));
+  // onglet par défaut : la saison de la première semaine encore à venir
+  let season = (seasons.find(s => allWeeks().some(w => w.a >= today && s.test(w.a))) || seasons[0]).id;
   function renderWeeks(animate) {
     if (!weeksBox) return;
     const tabs = $('#season-tabs');
@@ -172,7 +173,8 @@
   }
   if (arrIn) {
     arrIn.min = iso(addDays(today, 1));
-    if (!arrIn.value) arrIn.value = '2026-12-19';
+    // arrivée par défaut : le 19 décembre 2026 tant qu'il est à venir, sinon le prochain samedi
+    if (!arrIn.value) { const def = parse('2026-12-19'); arrIn.value = iso(def > today ? def : addDays(today, (6 - today.getDay() + 7) % 7 || 7)); }
     fillNights(false);
     arrIn.addEventListener('change', () => fromInputs(true));
     nightsIn.addEventListener('change', () => fromInputs(true));
@@ -273,7 +275,7 @@
       const done = $('#request-done');
       done.innerHTML = `<div class="confirm" role="status">
         <h3>${t('Demande prête à partir', 'Request ready to send')}</h3>
-        <p>${t('Simulation : rien n’a été envoyé. Sur le site en ligne, vous recevriez un e-mail de confirmation, puis le contrat de location.', 'Simulation: nothing has been sent. On the live site you would receive a confirmation email, then the rental contract.')}</p>
+        <p>${t('Simulation : rien n’a été envoyé. Sur le site en ligne, vous recevriez un e-mail de confirmation, puis le contrat de location.', 'Simulation: nothing has been sent. On the live site you would receive a confirmation email, then the rental contract.')}</p>
         <dl class="confirm-dl tnum">
           <dt>${t('Logement', 'Home')}</dt><dd>${aptName()}</dd>
           <dt>${t('Séjour', 'Stay')}</dt><dd>${fmt(a)} → ${fmt(d)}, ${days(a, d)} ${t('nuits', 'nights')}</dd>
