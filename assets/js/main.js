@@ -128,6 +128,14 @@
   addEventListener('scroll', onScrollHeader, { passive: true });
   onScrollHeader();
 
+  // Hauteur réelle de la sous-navigation (l'en-tête, lui, a la hauteur fixe --header-h) : le récapitulatif épinglé se cale dessous
+  const subnav = $('.subnav');
+  const measureBars = () => root.style.setProperty('--sub-h', subnav ? subnav.offsetHeight + 'px' : '0px');
+  measureBars();
+  if (subnav && 'ResizeObserver' in window) new ResizeObserver(measureBars).observe(subnav);
+  const sumBox = $('#summary');
+  if (sumBox) sumBox.setAttribute('data-lenis-prevent', '');
+
   const menu = $('#menu');
   const menuBtn = $('.menu-toggle');
   const horsMenu = on => { $$('body > main, body > footer, .mbar, .altimeter, .skip').forEach(el => { el.inert = on; }); root.classList.toggle('menu-ouvert', on); };
