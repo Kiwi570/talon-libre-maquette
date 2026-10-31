@@ -569,7 +569,7 @@
       const tween = gsap.to(track, {
         x: () => -dist(), ease: 'none',
         scrollTrigger: {
-          trigger: sec, start: 'top top', end: () => '+=' + Math.round(dist() * .5), pin: true, scrub: .6, invalidateOnRefresh: true, anticipatePin: 1,
+          trigger: sec, start: 'top top', end: () => '+=' + Math.round(dist() * .5), pin: true, scrub: .6, invalidateOnRefresh: true,
           onUpdate: self => { fill.style.transform = `scaleX(${self.progress})`; }
         }
       });
